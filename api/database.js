@@ -38,7 +38,7 @@ const processData = (data, checkboxName) => {
         const checkboxProperty = item.properties[checkboxName];
 
         // Ensure both Date and checkbox properties exist and the checkbox is checked
-        if (dateProperty && checkboxProperty && checkboxProperty.checkbox) {
+        if (dateProperty && dateProperty.created_time && checkboxProperty && checkboxProperty.checkbox) {
             // Parse the date using the format YYYY/MM/DD
             const dateObject = parseDate(dateProperty.created_time);
 
@@ -58,6 +58,11 @@ const processData = (data, checkboxName) => {
 
 // Helper function to parse the date in the format YYYY/MM/DD
 const parseDate = (dateString) => {
+    if (!dateString) {
+        console.error('Invalid date string:', dateString);
+        return new Date(NaN);
+    }
+
     const parts = dateString.split('/');
     if (parts.length === 3) {
         const year = parseInt(parts[0], 10);
@@ -65,5 +70,7 @@ const parseDate = (dateString) => {
         const day = parseInt(parts[2], 10);
         return new Date(year, month, day);
     }
+
+    console.error('Invalid date format:', dateString);
     return new Date(NaN); // Return an invalid date if parsing fails
 };
