@@ -34,12 +34,20 @@ const processData = (data, checkboxName) => {
     const checkboxMap = new Map();
 
     data.forEach(item => {
-        if (item.properties.Date && item.properties[checkboxName]) {
-            if (item.properties[checkboxName].checkbox) {  // Check if the checkbox is true
-                const dateObject = new Date(item.properties.Date.created_time);
+        const dateProperty = item.properties.Date;
+        const checkboxProperty = item.properties[checkboxName];
+
+        // Ensure both Date and checkbox properties exist and the checkbox is checked
+        if (dateProperty && checkboxProperty && checkboxProperty.checkbox) {
+            const dateObject = new Date(dateProperty.created_time);
+
+            // Check if the date is valid
+            if (!isNaN(dateObject.getTime())) {
                 dateObject.setDate(dateObject.getDate() + 1); // Add one day to the date
                 const date = dateObject.toISOString().split('T')[0]; // Format back to YYYY-MM-DD
-                checkboxMap.set(date, item.properties[checkboxName].checkbox);
+                checkboxMap.set(date, true);
+            } else {
+                console.error('Invalid date:', dateProperty.created_time);
             }
         }
     });
